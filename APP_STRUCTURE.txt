@@ -1,0 +1,272 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                     E-COMMERCE APP STRUCTURE DIAGRAM                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📱 NAVIGATION FLOW
+═══════════════════
+
+                            ┌─────────────┐
+                            │   App Root  │
+                            │  _layout.tsx│
+                            └──────┬──────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    │                             │
+              ┌─────▼──────┐              ┌──────▼──────┐
+              │   (tabs)   │              │   Modals    │
+              │  _layout   │              │             │
+              └─────┬──────┘              └──────┬──────┘
+                    │                            │
+        ┌───────────┼───────────┬────────┐      │
+        │           │           │        │      │
+   ┌────▼────┐ ┌───▼────┐ ┌───▼───┐ ┌──▼───┐  │
+   │  Home   │ │Category│ │  Cart │ │Profile│  │
+   │  index  │ │        │ │       │ │       │  │
+   └─────────┘ └────────┘ └───────┘ └───────┘  │
+                                                 │
+                                        ┌────────┼────────┐
+                                        │        │        │
+                                   ┌────▼───┐  ┌▼───────┐│
+                                   │Product │  │Checkout││
+                                   │ Detail │  │        ││
+                                   └────────┘  └────────┘│
+
+
+📂 FOLDER STRUCTURE
+═══════════════════
+
+app/
+├── 📂 (tabs)/                    ← Tab Navigation Group
+│   ├── 📄 _layout.tsx           ← Tab bar configuration
+│   ├── 📄 index.tsx             ← 🏠 Home Screen
+│   ├── 📄 categories.tsx        ← 📋 Categories Grid
+│   ├── 📄 cart.tsx              ← 🛒 Shopping Cart
+│   └── 📄 profile.tsx           ← 👤 User Profile
+│
+├── 📄 _layout.tsx                ← Root Stack Navigator
+├── 📄 index.tsx                  ← Entry Point (Redirect)
+├── 📄 product-detail.tsx         ← 🔍 Product Details
+├── 📄 checkout.tsx               ← 💳 Checkout Flow
+└── 📄 explore.tsx                ← (Legacy - not used)
+
+components/
+└── 📂 home/                      ← Home Screen Components
+    ├── 📄 HomeHeader.tsx         ← Location & Notifications
+    ├── 📄 SearchBar.tsx          ← Search Input
+    ├── 📄 BannerSlider.tsx       ← Promotional Banners
+    ├── 📄 CategoryIcons.tsx      ← Category Icons Row
+    └── 📄 BestDeals.tsx          ← Product Cards
+
+
+🎨 STYLE NAMING SYSTEM
+══════════════════════
+
+Screen Name Prefix + Element Name = Style Name
+
+┌─────────────────────────────────────────────────────────┐
+│  Screen           │  Prefix              │  Example      │
+├───────────────────┼──────────────────────┼───────────────┤
+│  Home             │  homeScreen          │  Container    │
+│  Categories       │  categoriesScreen    │  Grid         │
+│  Cart             │  cartScreen          │  Item         │
+│  Profile          │  profileScreen       │  Menu         │
+│  Product Detail   │  productDetail       │  Price        │
+│  Checkout         │  checkoutScreen      │  Button       │
+│  Components       │  [componentName]     │  Wrapper      │
+└─────────────────────────────────────────────────────────┘
+
+Example:
+  cartScreenQuantityButton
+  └────┬────┘└────┬────┘└──┬──┘
+     Screen    Element  Type
+
+
+🎬 USER JOURNEY
+═══════════════
+
+1️⃣  Launch App
+    ↓
+2️⃣  Home Screen (Tab 1)
+    • View banners
+    • Browse categories
+    • See best deals
+    ↓
+3️⃣  Select Product
+    ↓
+4️⃣  Product Detail Screen
+    • Choose color
+    • Select size
+    • Add to cart / Buy now
+    ↓
+5️⃣  Cart Screen (Tab 3)
+    • Adjust quantities
+    • Remove items
+    • View total
+    ↓
+6️⃣  Checkout Screen
+    • Confirm address
+    • Select payment
+    • Apply coupon
+    ↓
+7️⃣  Place Order
+    ✅ Order Confirmed
+
+
+📱 SCREEN COMPONENTS BREAKDOWN
+═══════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│  HOME SCREEN                                                     │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  HomeHeader                                              │   │
+│  │  • Delivery location                                     │   │
+│  │  • Notification bell                                     │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  SearchBar                                               │   │
+│  │  🔍 Search for products...                              │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  BannerSlider                                            │   │
+│  │  [Banner 1] [Banner 2] [Banner 3]                       │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  CategoryIcons                                           │   │
+│  │  📱  👕  💻  🏠  💄                                      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  BestDeals                    See All →                 │   │
+│  │  [Product 1] [Product 2] [Product 3]                    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  CATEGORIES SCREEN                                               │
+├─────────────────────────────────────────────────────────────────┤
+│  Categories                                           🔍         │
+│                                                                  │
+│  ┌────────────────┐  ┌────────────────┐                        │
+│  │      📱        │  │      👕        │                        │
+│  │   Mobiles &    │  │    Fashion &   │                        │
+│  │    Tablets     │  │    Clothing    │                        │
+│  └────────────────┘  └────────────────┘                        │
+│  ┌────────────────┐  ┌────────────────┐                        │
+│  │      🎧        │  │      🛋️        │                        │
+│  │  Electronics   │  │  Home & Living │                        │
+│  └────────────────┘  └────────────────┘                        │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  CART SCREEN                                                     │
+├─────────────────────────────────────────────────────────────────┤
+│  ←  My Cart                                          🗑️         │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │ [IMG]  Running Shoes For Men              ✕         │      │
+│  │        7 | Color: White                             │      │
+│  │        ₹ 2,499                      [−] 1 [+]       │      │
+│  └──────────────────────────────────────────────────────┘      │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │ [IMG]  Casual T-Shirt                     ✕         │      │
+│  │        M | Color: Black                             │      │
+│  │        ₹ 799                        [−] 1 [+]       │      │
+│  └──────────────────────────────────────────────────────┘      │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │  Subtotal                              ₹ 6,297      │      │
+│  │  Discount                            − ₹ 500        │      │
+│  │  Delivery                                FREE        │      │
+│  │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━       │      │
+│  │  Total                                 ₹ 5,797      │      │
+│  └──────────────────────────────────────────────────────┘      │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │          Proceed to Checkout                         │      │
+│  └──────────────────────────────────────────────────────┘      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  PROFILE SCREEN                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│  Profile                                              ⚙️         │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │  [RS]   Hello,                                       │      │
+│  │         Rohan Sharma                                 │      │
+│  └──────────────────────────────────────────────────────┘      │
+│                                                                  │
+│  My Orders                               View All →             │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │   📦        🚚        📋        ↩️                  │      │
+│  │ Pending   Shipped   Ordered   Returns               │      │
+│  └──────────────────────────────────────────────────────┘      │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │  📍  My Addresses                              ›     │      │
+│  │  💳  Payment Methods                           ›     │      │
+│  │  ❓  Help & Support                            ›     │      │
+│  │  ℹ️   About Us                                 ›     │      │
+│  │  🚪  Log Out                                    ›     │      │
+│  └──────────────────────────────────────────────────────┘      │
+└─────────────────────────────────────────────────────────────────┘
+
+
+🎨 COLOR PALETTE
+════════════════
+
+Primary:     ██████  #FF6347 (Tomato Red)
+Background:  ██████  #f8f8f8 (Light Gray)
+White:       ██████  #FFFFFF
+Text Dark:   ██████  #333333
+Text Medium: ██████  #666666
+Text Light:  ██████  #999999
+Success:     ██████  #4CAF50 (Green)
+Border:      ██████  #eeeeee
+
+
+📊 FILE COUNT SUMMARY
+═════════════════════
+
+Screens:       7 files
+Components:    5 files
+Documentation: 4 files
+CSS:           1 file (global.css)
+───────────────────────
+Total:        17 files
+
+Lines of Code: ~2,000+
+Style Rules:   ~300+
+Components:    12+ reusable
+
+
+✅ FEATURES IMPLEMENTED
+═══════════════════════
+
+✓ Tab Navigation (4 tabs)
+✓ Home with banners & deals
+✓ Categories grid (8 items)
+✓ Shopping cart with controls
+✓ User profile & settings
+✓ Product detail view
+✓ Checkout flow
+✓ Color selector
+✓ Size selector
+✓ Quantity controls
+✓ Price calculations
+✓ Payment methods
+✓ Address management
+
+
+🚀 READY TO USE
+═══════════════
+
+npm start       → Start development server
+npm run android → Run on Android
+npm run ios     → Run on iOS
+npm run web     → Run in browser
+
+
+═══════════════════════════════════════════════════════════════════
+                    Happy Coding! 🎉
+═══════════════════════════════════════════════════════════════════
