@@ -1,7 +1,7 @@
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import { PROFILE } from '@/constants/data';
 import { Palette } from '@/constants/theme';
-import { useShop } from '@/context/shop-context';
+import { getCartLineKey, useShop } from '@/context/shop-context';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -34,7 +34,7 @@ export default function CheckoutScreen() {
 
         <Text style={styles.checkoutSection}>Order List</Text>
         {selectedCart.map((item) => (
-          <View key={item.id} style={styles.checkoutItem}>
+          <View key={getCartLineKey(item)} style={styles.checkoutItem}>
             <Image source={{ uri: item.image }} style={styles.checkoutImage} contentFit="cover" />
             <View style={{ flex: 1 }}>
               <Text style={styles.checkoutName} numberOfLines={1}>

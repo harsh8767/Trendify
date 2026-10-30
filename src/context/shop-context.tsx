@@ -1,7 +1,20 @@
-import { PRODUCTS, type Product } from '@/constants/data';
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { type Product } from "@/constants/data";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
 export type CartItem = Product & { quantity: number; selected: boolean };
+
+// A cart line is one product in one colour and one size, so each combination gets its own key.
+export function getCartLineKey(
+  item: Pick<Product, "id" | "color" | "size">,
+): string {
+  return `${item.id}::${item.color}::${item.size}`;
+}
 
 type ShopContextValue = {
   cart: CartItem[];
@@ -9,29 +22,35 @@ type ShopContextValue = {
   addToCart: (product: Product) => void;
   toggleWishlist: (id: string) => void;
   isWishlisted: (id: string) => boolean;
-  toggleCartItem: (id: string) => void;
-  changeQuantity: (id: string, delta: number) => void;
-  removeFromCart: (id: string) => void;
+  toggleCartItem: (lineKey: string) => void;
+  changeQuantity: (lineKey: string, delta: number) => void;
+  removeFromCart: (lineKey: string) => void;
   selectedCart: CartItem[];
   cartTotal: number;
 };
 
 const ShopContext = createContext<ShopContextValue | null>(null);
 
-const seedCart: CartItem[] = [
-  { ...PRODUCTS[0], quantity: 1, selected: true },
-  { ...PRODUCTS[7], quantity: 1, selected: true },
-  { ...PRODUCTS[9], quantity: 1, selected: true },
-  { ...PRODUCTS[1], quantity: 1, selected: true },
-];
+type ShopProviderProps = {
+  children: ReactNode;
+  initialCart?: CartItem[];
+  initialWishlist?: string[];
+};
 
-export function ShopProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(seedCart);
-  const [wishlist, setWishlist] = useState<string[]>(PRODUCTS.slice(0, 4).map((item) => item.id));
+export function ShopProvider({
+  children,
+  initialCart = [],
+  initialWishlist = [],
+}: ShopProviderProps) {
+  const [cart, setCart] = useState<CartItem[]>(initialCart);
+  const [wishlist, setWishlist] = useState<string[]>(initialWishlist);
 
   const value = useMemo<ShopContextValue>(() => {
     const selectedCart = cart.filter((item) => item.selected);
-    const cartTotal = selectedCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const cartTotal = selectedCart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
 
     return {
       cart,
@@ -40,10 +59,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       cartTotal,
       addToCart: (product) => {
         setCart((current) => {
-          const existing = current.find((item) => item.id === product.id);
-          if (existing) {
-            return current.map((item) =>
-              item.id === product.id ? { ...item, quantity: item.quantity + 1, selected: true } : item
+          const newLineKey = getCartLineKey(product);
+          const existingLine = current.find(
+            (line) => getCartLineKey(line) === newLineKey,
+          );
+          if (existingLine) {
+            return current.map((line) =>
+              getCartLineKey(line) === newLineKey
+                ? { ...line, quantity: line.quantity + 1, selected: true }
+                : line,
             );
           }
           return [...current, { ...product, quantity: 1, selected: true }];
@@ -51,24 +75,34 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       },
       toggleWishlist: (id) => {
         setWishlist((current) =>
-          current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+          current.includes(id)
+            ? current.filter((item) => item !== id)
+            : [...current, id],
         );
       },
       isWishlisted: (id) => wishlist.includes(id),
-      toggleCartItem: (id) => {
+      toggleCartItem: (lineKey) => {
         setCart((current) =>
-          current.map((item) => (item.id === id ? { ...item, selected: !item.selected } : item))
+          current.map((line) =>
+            getCartLineKey(line) === lineKey
+              ? { ...line, selected: !line.selected }
+              : line,
+          ),
         );
       },
-      changeQuantity: (id, delta) => {
+      changeQuantity: (lineKey, delta) => {
         setCart((current) =>
-          current.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-          )
+          current.map((line) =>
+            getCartLineKey(line) === lineKey
+              ? { ...line, quantity: Math.max(1, line.quantity + delta) }
+              : line,
+          ),
         );
       },
-      removeFromCart: (id) => {
-        setCart((current) => current.filter((item) => item.id !== id));
+      removeFromCart: (lineKey) => {
+        setCart((current) =>
+          current.filter((line) => getCartLineKey(line) !== lineKey),
+        );
       },
     };
   }, [cart, wishlist]);
@@ -79,7 +113,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 export function useShop() {
   const context = useContext(ShopContext);
   if (!context) {
-    throw new Error('useShop must be used within ShopProvider');
+    throw new Error("useShop must be used within ShopProvider");
   }
   return context;
 }

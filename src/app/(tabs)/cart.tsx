@@ -1,7 +1,7 @@
 import ScreenHeader from '@/components/ui/ScreenHeader';
 import PrimaryButton from '@/components/ui/PrimaryButton';
 import { Palette } from '@/constants/theme';
-import { useShop } from '@/context/shop-context';
+import { getCartLineKey, useShop } from '@/context/shop-context';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -16,10 +16,10 @@ export default function CartScreen() {
       <ScreenHeader title="Cart" onSearch={() => router.push('/search')} onMore={() => undefined} />
       <ScrollView contentContainerStyle={styles.cartScroll} showsVerticalScrollIndicator={false}>
         {cart.map((item) => (
-          <View key={item.id} style={styles.cartItem}>
+          <View key={getCartLineKey(item)} style={styles.cartItem}>
             <TouchableOpacity
               style={[styles.cartCheck, item.selected && styles.cartCheckOn]}
-              onPress={() => toggleCartItem(item.id)}
+              onPress={() => toggleCartItem(getCartLineKey(item))}
             >
               {item.selected ? <Text style={styles.cartCheckMark}>✓</Text> : null}
             </TouchableOpacity>
@@ -29,7 +29,7 @@ export default function CartScreen() {
                 <Text style={styles.cartName} numberOfLines={1}>
                   {item.name}
                 </Text>
-                <TouchableOpacity onPress={() => removeFromCart(item.id)}>
+                <TouchableOpacity onPress={() => removeFromCart(getCartLineKey(item))}>
                   <Text style={styles.cartTrash}>🗑</Text>
                 </TouchableOpacity>
               </View>
@@ -41,11 +41,11 @@ export default function CartScreen() {
               <View style={styles.cartBottomRow}>
                 <Text style={styles.cartPrice}>${item.price.toFixed(2)}</Text>
                 <View style={styles.cartQty}>
-                  <TouchableOpacity style={styles.cartQtyBtn} onPress={() => changeQuantity(item.id, -1)}>
+                  <TouchableOpacity style={styles.cartQtyBtn} onPress={() => changeQuantity(getCartLineKey(item), -1)}>
                     <Text style={styles.cartQtyText}>−</Text>
                   </TouchableOpacity>
                   <Text style={styles.cartQtyValue}>{item.quantity}</Text>
-                  <TouchableOpacity style={[styles.cartQtyBtn, styles.cartQtyBtnOn]} onPress={() => changeQuantity(item.id, 1)}>
+                  <TouchableOpacity style={[styles.cartQtyBtn, styles.cartQtyBtnOn]} onPress={() => changeQuantity(getCartLineKey(item), 1)}>
                     <Text style={[styles.cartQtyText, styles.cartQtyTextOn]}>+</Text>
                   </TouchableOpacity>
                 </View>
