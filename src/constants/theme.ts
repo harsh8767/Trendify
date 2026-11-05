@@ -1,21 +1,50 @@
-import '@/global.css';
 
+import '@/global.css';
 import { Platform } from 'react-native';
 
 export const Palette = {
-  primary: '#4F8C5B',
-  primaryDark: '#3E7349',
-  primarySoft: '#EAF4EC',
-  primaryMuted: '#DCECE0',
-  background: '#F6F6F6',
+  primary: '#222222',
+  primaryDark: '#111111',
+  primarySoft: '#F5F0E7',
+  primaryMuted: '#E8DCC8',
+
+  accent: '#C5A46D',
+  accentSoft: '#F4EBDD',
+
+  // Pearl White light theme
+  background: '#F8F5EC',
   card: '#FFFFFF',
-  text: '#111111',
-  textSecondary: '#6B6B6B',
-  muted: '#9A9A9A',
-  border: '#EEEEEE',
+  input: '#FBF9F4',
+  text: '#292929',
+  textSecondary: '#6B6257',
+  muted: '#999084',
+  border: '#E8E0D2',
+
   star: '#F5A623',
-  danger: '#FF4D4F',
+  danger: '#E5484D',
   overlay: 'rgba(0,0,0,0.35)',
+} as const;
+
+export const DarkPalette = {
+  primary: '#D6B77A',
+  primaryDark: '#B89555',
+  primarySoft: '#3A3225',
+  primaryMuted: '#51432D',
+
+  accent: '#D6B77A',
+  accentSoft: '#3A3225',
+
+  background: '#141414',
+  card: '#202020',
+  input: '#292929',
+  text: '#FFFFFF',
+  textSecondary: '#C5C5C5',
+  muted: '#929292',
+  border: '#383838',
+
+  star: '#F5A623',
+  danger: '#FF6B6B',
+  overlay: 'rgba(0,0,0,0.65)',
 } as const;
 
 export const Colors = {
@@ -26,18 +55,44 @@ export const Colors = {
     backgroundSelected: Palette.primarySoft,
     textSecondary: Palette.textSecondary,
     tint: Palette.primary,
+    border: Palette.border,
+    danger: Palette.danger,
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-    tint: Palette.primary,
+    text: DarkPalette.text,
+    background: DarkPalette.background,
+    backgroundElement: DarkPalette.card,
+    backgroundSelected: DarkPalette.primarySoft,
+    textSecondary: DarkPalette.textSecondary,
+    tint: DarkPalette.primary,
+    border: DarkPalette.border,
+    danger: DarkPalette.danger,
   },
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+
+export type AppTheme = {
+  primary: string;
+  primaryDark: string;
+  primarySoft: string;
+  primaryMuted: string;
+  accent: string;
+  accentSoft: string;
+  background: string;
+  card: string;
+  input: string;
+  text: string;
+  textSecondary: string;
+  muted: string;
+  border: string;
+  star: string;
+  danger: string;
+  overlay: string;
+};
+
+export const getAppTheme = (isDark: boolean): AppTheme =>
+  isDark ? DarkPalette : Palette;
 
 export const Fonts = Platform.select({
   ios: {
@@ -70,5 +125,9 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+export const BottomTabInset = Platform.select({
+  ios: 50,
+  android: 80,
+}) ?? 0;
+
 export const MaxContentWidth = 430;

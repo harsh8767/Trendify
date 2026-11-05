@@ -1,4 +1,5 @@
-import { Palette } from '@/constants/theme';
+
+import { useTheme } from '@/context/theme-context';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type SectionHeaderProps = {
@@ -7,12 +8,25 @@ type SectionHeaderProps = {
   onAction?: () => void;
 };
 
-export default function SectionHeader({ title, actionLabel = 'See All', onAction }: SectionHeaderProps) {
+export default function SectionHeader({
+  title,
+  actionLabel = 'See All',
+  onAction,
+}: SectionHeaderProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.sectionHeaderRow}>
       <Text style={styles.sectionHeaderTitle}>{title}</Text>
+
       {onAction ? (
-        <TouchableOpacity onPress={onAction} hitSlop={8}>
+        <TouchableOpacity
+          onPress={onAction}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={actionLabel}
+        >
           <Text style={styles.sectionHeaderAction}>{actionLabel}</Text>
         </TouchableOpacity>
       ) : null}
@@ -20,22 +34,24 @@ export default function SectionHeader({ title, actionLabel = 'See All', onAction
   );
 }
 
-const styles = StyleSheet.create({
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    marginBottom: 16,
-  },
-  sectionHeaderTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: Palette.text,
-  },
-  sectionHeaderAction: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: Palette.primary,
-  },
-});
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
+    sectionHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 24,
+      marginBottom: 16,
+    },
+    sectionHeaderTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    sectionHeaderAction: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.accent,
+    },
+  });
+}

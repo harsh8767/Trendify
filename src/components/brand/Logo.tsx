@@ -1,38 +1,56 @@
-import { Palette } from '@/constants/theme';
-import { StyleSheet, View } from 'react-native';
+import { useTheme } from '@/context/theme-context';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-type LogoProps = {
-  size?: number;
-  inverted?: boolean;
+type SectionHeaderProps = {
+  title: string;
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
-export default function Logo({ size = 36, inverted = false }: LogoProps) {
-  const outer = inverted ? '#FFFFFF' : Palette.primary;
-  const inner = inverted ? Palette.primary : '#FFFFFF';
-  const radius = Math.max(8, size * 0.28);
-  const bar = Math.max(3, size * 0.14);
-  const stem = size * 0.46;
-  const top = size * 0.42;
+export default function SectionHeader({
+  title,
+  actionLabel = 'See All',
+  onAction,
+}: SectionHeaderProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   return (
-    <View style={[styles.logoWrap, { width: size, height: size, borderRadius: radius, backgroundColor: outer }]}>
-      <View style={{ width: top, height: bar, backgroundColor: inner, borderRadius: bar }} />
-      <View
-        style={{
-          width: bar,
-          height: stem,
-          backgroundColor: inner,
-          borderRadius: bar,
-          marginTop: -bar * 0.2,
-        }}
-      />
+    <View style={styles.sectionHeaderRow}>
+      <Text style={styles.sectionHeaderTitle}>{title}</Text>
+
+      {onAction ? (
+        <TouchableOpacity
+          onPress={onAction}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={actionLabel}
+        >
+          <Text style={styles.sectionHeaderAction}>{actionLabel}</Text>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  logoWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function createStyles(colors: ReturnType<typeof useTheme>['colors']) {
+  return StyleSheet.create({
+    sectionHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 24,
+      marginBottom: 16,
+    },
+    sectionHeaderTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    sectionHeaderAction: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.accent,
+    },
+  });
+}
