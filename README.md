@@ -110,7 +110,7 @@ Trendify is a frontend shopping application designed to provide a smooth and use
 ## 📂 Project Structure
 
 ```text
-Trendify/
+app/
 ├── src/
 │   ├── app/
 │   │   ├── (seller)/       # 🏪 Seller screens
