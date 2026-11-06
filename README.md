@@ -148,7 +148,7 @@ git clone https://github.com/harsh8767/Trendify.git
 **2. Navigate to the project directory:**
 
 ```bash
-cd Trendify
+cd app
 ```
 
 **3. Install dependencies:**
